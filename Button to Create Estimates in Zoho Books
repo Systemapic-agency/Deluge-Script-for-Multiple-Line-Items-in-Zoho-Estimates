@@ -1,0 +1,39 @@
+string button.CreateEstimateFunction1(String deal_id) 
+{ 
+record_details = invokeurl 
+[ 
+url :"https://www.zohoapis.eu/crm/v4/Deals/" + deal_id 
+type :GET 
+connection:"zohoconnection" 
+]; 
+data = record_details.get("data"); 
+import_customer = invokeurl 
+[ 
+url :" https://books.zoho.eu/api/v3/crm/contact/" + data.getJson("Contact_Name").getJson("id") + 
+"/import" 
+type :POST 
+connection:"zohoconnection" 
+]; 
+if(import_customer.get("code") == 0 && ifnull(import_customer.getJson("data"),"") != "") 
+{ 
+customer_id = import_customer.getJson("data").getJson("customer_id"); 
+products = list(); 
+deal_products = zoho.crm.getRelatedRecords("Products","Deals",deal_id); 
+if(deal_products.size() > 0) 
+{ 
+for each  rw in deal_products 
+{ 
+prds = Map(); 
+prds.put("name",rw.getJson("Product_Name")); 
+prds.put("quantity",1); 
+products.add(prds); 
+} 
+} 
+data = Map(); 
+data.put("customer_id",customer_id); 
+data.put("line_items",products); 
+create_estimate = zoho.books.createRecord("estimates","20084065232",data,"zohoconnection"); 
+info create_estimate; 
+} 
+return "Estimate is Created"; 
+}
