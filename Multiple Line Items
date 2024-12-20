@@ -1,0 +1,28 @@
+void update_crm (string payload) 
+{ 
+payload = payload.toMap(); 
+email = payload.toMap().getJSon("billing_email"); 
+search_lead = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")"); 
+if(search_lead.size() > 0) 
+{ 
+} 
+lead_id = search_lead.get(0).getJSON("id"); 
+info lead_id; 
+line_items = payload.toMap().getJSon("line_items"); 
+for each rec in line_items 
+{ 
+product_name = rec.getJson("parent_name"); 
+search_product = zoho.crm.searchRecords("Products","(Product_Name:equals:" + 
+product_name + ")"); 
+if(search_product.size() > 0) 
+{ 
+for each pro in search_product 
+{ 
+pro_id = pro.getJSON("id"); 
+update_crm = 
+zoho.crm.updateRelatedRecord("Products",pro_id,"Leads",lead_id,Map(),"crm"); 
+info update_crm; 
+} 
+} 
+} 
+} 
