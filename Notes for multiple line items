@@ -1,0 +1,5 @@
+Code for adding multiple items in Zoho, and with detail of where to put the 
+code. 
+o use this function within Flow by navigating to Logic -> Custom Function. 
+o rephrase the CRM's connection name in the line 21 instead of "crm". 
+o pass the entire input from WooCommerce within the function. 
